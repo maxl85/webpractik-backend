@@ -1,6 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { DeleteResult, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
+import * as fs from 'fs';
 
 import { CreatePromoDto } from './dto/create-promo.dto';
 import { UpdatePromoDto } from './dto/update-promo.dto';
@@ -32,10 +33,28 @@ export class PromoService {
     return await this.repository.findOneBy({ id });
   }
 
-  update(id: number, dto: UpdatePromoDto, image: Express.Multer.File) {
-    console.log(dto)
-    console.log(image)
-    return `This action updates a #${id} promo`;
+  async update(id: number, dto: UpdatePromoDto, image: Express.Multer.File) {
+    const toUpdate = await this.repository.findOneBy({ id });
+    if (!toUpdate) {
+      throw new BadRequestException(`Записи с id=${id} не найдено`);
+    }
+    if (dto.text) {
+      toUpdate.text = dto.text;
+    }
+    if (dto.title) {
+      toUpdate.title = dto.title;
+    }
+    if (image) {
+      if (toUpdate.image !== image.filename) {
+        fs.unlink(`db_images/promo/${toUpdate.image}`, (err) => {
+          if (err) {
+            console.error(err);
+          }
+        });
+      }
+      toUpdate.image = image.filename;
+    }
+    return await this.repository.save(toUpdate);
   }
 
   async delete(id: number): Promise<DeleteResult> {

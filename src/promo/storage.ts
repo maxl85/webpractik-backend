@@ -5,6 +5,6 @@ const fileName = (req, file, callback) => {
 };
 
 export const fileStorage = diskStorage({
-  destination: './uploads/promo',
+  destination: './db_images/promo',
   filename: fileName,
 });
