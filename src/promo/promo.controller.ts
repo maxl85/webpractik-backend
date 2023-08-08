@@ -6,19 +6,30 @@ import {
   Patch,
   Param,
   Delete,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { ApiTags, ApiConsumes, ApiBody } from '@nestjs/swagger';
 
 import { PromoService } from './promo.service';
+import { fileStorage } from './storage';
 import { CreatePromoDto } from './dto/create-promo.dto';
 import { UpdatePromoDto } from './dto/update-promo.dto';
 
 @Controller('promo')
+@ApiTags('promo')
 export class PromoController {
   constructor(private readonly promoService: PromoService) {}
 
   @Post()
-  create(@Body() createPromoDto: CreatePromoDto) {
-    return this.promoService.create(createPromoDto);
+  @ApiConsumes('multipart/form-data')
+  @UseInterceptors(FileInterceptor('image', { storage: fileStorage }))
+  create(
+    @Body() dto: CreatePromoDto,
+    @UploadedFile() image: Express.Multer.File,
+  ) {
+    return this.promoService.create(dto, image);
   }
 
   @Get()
@@ -32,12 +43,18 @@ export class PromoController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updatePromoDto: UpdatePromoDto) {
-    return this.promoService.update(+id, updatePromoDto);
+  @ApiConsumes('multipart/form-data')
+  @UseInterceptors(FileInterceptor('image', { storage: fileStorage }))
+  update(
+    @Param('id') id: string,
+    @Body() dto: UpdatePromoDto,
+    @UploadedFile() image: Express.Multer.File,
+  ) {
+    return this.promoService.update(+id, dto, image);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.promoService.remove(+id);
+    return this.promoService.delete(+id);
   }
 }
