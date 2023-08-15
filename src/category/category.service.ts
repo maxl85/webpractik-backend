@@ -1,26 +1,38 @@
 import { Injectable } from '@nestjs/common';
-import { CreateCategoryDto } from './dto/create-category.dto';
-import { UpdateCategoryDto } from './dto/update-category.dto';
+import { DeleteResult, Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+
+import { CategoryDto } from './dto/category.dto';
+import { CategoryEntity } from './entities/category.entity';
 
 @Injectable()
 export class CategoryService {
-  create(createCategoryDto: CreateCategoryDto) {
-    return 'This action adds a new category';
+  constructor(
+    @InjectRepository(CategoryEntity)
+    private repository: Repository<CategoryEntity>,
+  ) {}
+
+  async create(dto: CategoryDto): Promise<CategoryEntity> {
+    const category = new CategoryEntity();
+    category.name = dto.name;
+    return this.repository.save(category);
   }
 
-  findAll() {
-    return `This action returns all category`;
+  async findAll(): Promise<CategoryEntity[]> {
+    return this.repository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} category`;
+  async findOne(id: number): Promise<CategoryEntity> {
+    return this.repository.findOneBy({ id });
   }
 
-  update(id: number, updateCategoryDto: UpdateCategoryDto) {
-    return `This action updates a #${id} category`;
+  async update(id: number, dto: CategoryDto): Promise<CategoryEntity> {
+    const toUpdate = await this.repository.findOneBy({ id });
+    toUpdate.name = dto.name;
+    return this.repository.save(toUpdate);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} category`;
+  async delete(id: number): Promise<DeleteResult> {
+    return this.repository.delete(id);
   }
 }

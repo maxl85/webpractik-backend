@@ -1,19 +1,31 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { CategoryService } from './category.service';
-import { CreateCategoryDto } from './dto/create-category.dto';
-import { UpdateCategoryDto } from './dto/update-category.dto';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
+import { DeleteResult } from 'typeorm';
 
+import { CategoryService } from './category.service';
+import { CategoryDto } from './dto/category.dto';
+import { CategoryEntity } from './entities/category.entity';
+
+@ApiTags('category')
 @Controller('category')
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
   @Post()
-  create(@Body() createCategoryDto: CreateCategoryDto) {
-    return this.categoryService.create(createCategoryDto);
+  create(@Body() dto: CategoryDto): Promise<CategoryEntity> {
+    return this.categoryService.create(dto);
   }
 
   @Get()
-  findAll() {
+  findAll(): Promise<CategoryEntity[]> {
     return this.categoryService.findAll();
   }
 
@@ -23,12 +35,12 @@ export class CategoryController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCategoryDto: UpdateCategoryDto) {
-    return this.categoryService.update(+id, updateCategoryDto);
+  update(@Param('id') id: string, @Body() dto: CategoryDto) {
+    return this.categoryService.update(+id, dto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.categoryService.remove(+id);
+  delete(@Param('id') id: string): Promise<DeleteResult> {
+    return this.categoryService.delete(+id);
   }
 }
