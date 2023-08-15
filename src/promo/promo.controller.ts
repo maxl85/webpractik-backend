@@ -9,18 +9,20 @@ import {
   UseInterceptors,
   UploadedFile,
 } from '@nestjs/common';
+import { ApiTags, ApiConsumes, ApiOkResponse } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ApiTags, ApiConsumes } from '@nestjs/swagger';
 
 import { PromoService } from './promo.service';
 import { fileStorage } from './storage';
 import { CreatePromoDto } from './dto/create-promo.dto';
 import { UpdatePromoDto } from './dto/update-promo.dto';
+import { PromoEntity } from './entities/promo.entity';
+import { DeleteResult } from 'typeorm';
 
 @Controller('promo')
 @ApiTags('promo')
 export class PromoController {
-  constructor(private readonly promoService: PromoService) {}
+  constructor(private readonly promoService: PromoService) { }
 
   @Post()
   @ApiConsumes('multipart/form-data')
@@ -33,7 +35,7 @@ export class PromoController {
   }
 
   @Get()
-  findAll() {
+  findAll(): Promise<PromoEntity[]> {
     return this.promoService.findAll();
   }
 
@@ -49,12 +51,12 @@ export class PromoController {
     @Param('id') id: string,
     @Body() dto: UpdatePromoDto,
     @UploadedFile() image: Express.Multer.File,
-  ) {
+  ): Promise<PromoEntity> {
     return this.promoService.update(+id, dto, image);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  remove(@Param('id') id: string): Promise<DeleteResult> {
     return this.promoService.delete(+id);
   }
 }

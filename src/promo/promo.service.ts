@@ -18,7 +18,7 @@ export class PromoService {
     dto: CreatePromoDto,
     image: Express.Multer.File,
   ): Promise<PromoEntity> {
-    return await this.repository.save({
+    return this.repository.save({
       image: image.filename,
       title: dto.title,
       text: dto.text,
@@ -26,11 +26,11 @@ export class PromoService {
   }
 
   async findAll(): Promise<PromoEntity[]> {
-    return await this.repository.find();
+    return this.repository.find();
   }
 
   async findOne(id: number): Promise<PromoEntity> {
-    return await this.repository.findOneBy({ id });
+    return this.repository.findOneBy({ id });
   }
 
   async update(id: number, dto: UpdatePromoDto, image: Express.Multer.File) {
@@ -54,10 +54,10 @@ export class PromoService {
       }
       toUpdate.image = image.filename;
     }
-    return await this.repository.save(toUpdate);
+    return this.repository.save(toUpdate);
   }
 
   async delete(id: number): Promise<DeleteResult> {
-    return await this.repository.delete(id);
+    return this.repository.delete(id);
   }
 }

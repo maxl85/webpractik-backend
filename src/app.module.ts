@@ -4,6 +4,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { PromoModule } from './promo/promo.module';
 import { getPostgresConfig } from './configs/postgres.config';
+import { CategoryModule } from './category/category.module';
+import { ProductModule } from './product/product.module';
 
 @Module({
   imports: [
@@ -14,6 +16,8 @@ import { getPostgresConfig } from './configs/postgres.config';
       useFactory: getPostgresConfig,
     }),
     PromoModule,
+    CategoryModule,
+    ProductModule,
   ],
   controllers: [],
   providers: [],
