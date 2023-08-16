@@ -1,37 +1,76 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+  UseInterceptors,
+  UploadedFile,
+} from '@nestjs/common';
+import { ApiConsumes, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { DeleteResult } from 'typeorm';
 
+import { fileStorage } from './storage';
 import { ProductService } from './product.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
+import { ProductEntity } from './entities/product.entity';
 
 @ApiTags('product')
 @Controller('product')
 export class ProductController {
-  constructor(private readonly productService: ProductService) {}
+  constructor(private readonly productService: ProductService) { }
 
   @Post()
-  create(@Body() createProductDto: CreateProductDto) {
-    return this.productService.create(createProductDto);
+  @ApiConsumes('multipart/form-data')
+  @UseInterceptors(FileInterceptor('image', { storage: fileStorage }))
+  create(
+    @Body() dto: CreateProductDto,
+    @UploadedFile() image: Express.Multer.File,
+  ): Promise<ProductEntity> {
+    return this.productService.create(dto, image);
   }
 
+  // @Get('findByCategoryId')
+  // findByCategoryId(
+  //   @Query('categoryId') categoryId: number,
+  // ): Promise<ProductEntity[]> {
+  //   return this.productService.findByCategoryId(categoryId);
+  // }
+
+  // @Get()
+  // findAll(): Promise<ProductEntity[]> {
+  //   return this.productService.findAll();
+  // }
   @Get()
-  findAll() {
-    return this.productService.findAll();
+  @ApiQuery({ name: 'categoryId', required: false })
+  findAll(@Query('categoryId') categoryId: number): Promise<ProductEntity[]> {
+    if (categoryId) return this.productService.findByCategoryId(categoryId);
+    else return this.productService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
+  @Get('/:id')
+  findOne(@Param('id') id: string): Promise<ProductEntity> {
     return this.productService.findOne(+id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateProductDto: UpdateProductDto) {
-    return this.productService.update(+id, updateProductDto);
+  @ApiConsumes('multipart/form-data')
+  @UseInterceptors(FileInterceptor('image', { storage: fileStorage }))
+  update(
+    @Param('id') id: string,
+    @Body() dto: UpdateProductDto,
+    @UploadedFile() image: Express.Multer.File,
+  ): Promise<ProductEntity> {
+    return this.productService.update(+id, dto, image);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.productService.remove(+id);
+  delete(@Param('id') id: string): Promise<DeleteResult> {
+    return this.productService.delete(+id);
   }
 }

@@ -9,7 +9,7 @@ import {
   UseInterceptors,
   UploadedFile,
 } from '@nestjs/common';
-import { ApiTags, ApiConsumes, ApiOkResponse } from '@nestjs/swagger';
+import { ApiTags, ApiConsumes } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 
 import { PromoService } from './promo.service';
@@ -19,8 +19,8 @@ import { UpdatePromoDto } from './dto/update-promo.dto';
 import { PromoEntity } from './entities/promo.entity';
 import { DeleteResult } from 'typeorm';
 
-@Controller('promo')
 @ApiTags('promo')
+@Controller('promo')
 export class PromoController {
   constructor(private readonly promoService: PromoService) { }
 
@@ -30,7 +30,7 @@ export class PromoController {
   create(
     @Body() dto: CreatePromoDto,
     @UploadedFile() image: Express.Multer.File,
-  ) {
+  ): Promise<PromoEntity> {
     return this.promoService.create(dto, image);
   }
 
@@ -40,7 +40,7 @@ export class PromoController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id') id: string): Promise<PromoEntity> {
     return this.promoService.findOne(+id);
   }
 

@@ -22,6 +22,6 @@ export class ProductEntity {
   @Column('int', { array: true })
   prices: number[];
 
-  @ManyToOne(() => CategoryEntity, (category) => category.products)
+  @ManyToOne(() => CategoryEntity, (category) => category.products, { eager: true })
   category: CategoryEntity;
 }

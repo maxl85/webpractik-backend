@@ -20,14 +20,20 @@ export class CreateProductDto {
   @IsString()
   description: string = 'Состав';
 
-  @IsArray()
-  @IsNumber({}, { each: true })
-  sizes: number[];
+  // @IsArray()
+  // @IsNumber({}, { each: true })
+  // sizes: number[];
+  @IsString()
+  sizes: string = '20,30,40';
 
-  @IsArray()
-  @IsNumber({}, { each: true })
-  prices: number[];
+  // @IsArray()
+  // @IsNumber({}, { each: true })
+  // prices: number[];
+  @IsString()
+  prices: string = '400,599,700';
 
   @IsNumber()
   categoryId: number;
+  // @IsString()
+  // categoryId: string = '1';
 }
