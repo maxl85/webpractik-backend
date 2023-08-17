@@ -9,6 +9,7 @@ import {
   Query,
   UseInterceptors,
   UploadedFile,
+  Response,
 } from '@nestjs/common';
 import { ApiConsumes, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -51,6 +52,11 @@ export class ProductController {
   findAll(@Query('categoryId') categoryId: number): Promise<ProductEntity[]> {
     if (categoryId) return this.productService.findByCategoryId(categoryId);
     else return this.productService.findAll();
+  }
+
+  @Get('/image/:path')
+  download(@Param('path') path: string, @Response() response) {
+    return response.sendFile(path, { root: './db_images/product' });
   }
 
   @Get('/:id')

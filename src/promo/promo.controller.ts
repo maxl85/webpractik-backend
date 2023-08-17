@@ -8,6 +8,7 @@ import {
   Delete,
   UseInterceptors,
   UploadedFile,
+  Response,
 } from '@nestjs/common';
 import { ApiTags, ApiConsumes } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -37,6 +38,11 @@ export class PromoController {
   @Get()
   findAll(): Promise<PromoEntity[]> {
     return this.promoService.findAll();
+  }
+
+  @Get('/image/:path')
+  download(@Param('path') path: string, @Response() response) {
+    return response.sendFile(path, { root: './db_images/promo' });
   }
 
   @Get(':id')

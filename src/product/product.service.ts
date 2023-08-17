@@ -34,9 +34,12 @@ export class ProductService {
     //   prices: dto.prices,
     //   category: { id: dto.categoryId },
     // });
+    
+    // console.log(image.destination.replace('.'))
 
     const product = new ProductEntity();
     product.image = image.filename;
+    // product.image = image.path;
     product.name = dto.name;
     product.description = dto.description;
     product.sizes = dto.sizes.split(',').map((x) => +x);
