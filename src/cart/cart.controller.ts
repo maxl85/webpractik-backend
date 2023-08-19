@@ -10,8 +10,8 @@ export class CartController {
   constructor(private readonly cartService: CartService) {}
 
   @Post()
-  create(@Body() createCartDto: CreateCartDto) {
-    return this.cartService.create(createCartDto);
+  addToCart(@Body() dto: CreateCartDto, @Ip() ip: string) {
+    return this.cartService.addToCart(dto, ip);
   }
 
   @Get()

@@ -13,6 +13,7 @@ export class ProductService {
   constructor(
     @InjectRepository(ProductEntity)
     private productRepository: Repository<ProductEntity>,
+
     @InjectRepository(CategoryEntity)
     private categoryRepository: Repository<CategoryEntity>,
   ) {}

@@ -1,7 +1,8 @@
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 import { CategoryEntity } from 'src/category/entities/category.entity';
-import { CartItemEntity } from 'src/cart/entities/cartItem.entity';
+// import { CartItemEntity } from 'src/cart/entities/cartItem.entity';
+import { CartEntity } from 'src/cart/entities/cart.entity';
 
 @Entity('product')
 export class ProductEntity {
@@ -27,7 +28,12 @@ export class ProductEntity {
   @JoinColumn()
   category: CategoryEntity;
 
-  @OneToMany(() => CartItemEntity, (cartItem) => cartItem.id)
+  @OneToMany(() => CartEntity, (cart) => cart.id)
   @JoinColumn()
-  cartItem: CartItemEntity[];
+  cart: CartEntity[];
+
+  // @OneToMany(() => CartItemEntity, (cartItem) => cartItem.id)
+  // @JoinColumn()
+  // cartItem: CartItemEntity[];
+  
 }
