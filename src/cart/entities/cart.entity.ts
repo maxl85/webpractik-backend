@@ -1,7 +1,11 @@
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-// import { CartItemEntity } from './cartItem.entity';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { ProductEntity } from 'src/product/entities/product.entity';
-
 
 @Entity('cart')
 export class CartEntity {
@@ -20,6 +24,9 @@ export class CartEntity {
 
   @Column()
   quantity: number;
+
+  @Column()
+  price: number;
 
   @Column()
   totalPrice: number;

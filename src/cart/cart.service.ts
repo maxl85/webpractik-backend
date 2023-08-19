@@ -1,10 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { DeleteResult, Repository } from 'typeorm';
 
 import { ProductEntity } from 'src/product/entities/product.entity';
-import { CreateCartDto } from './dto/create-cart.dto';
-import { UpdateCartDto } from './dto/update-cart.dto';
+import { AddCartDto } from './dto/add-cart.dto';
 import { CartEntity } from './entities/cart.entity';
 
 @Injectable()
@@ -17,7 +16,7 @@ export class CartService {
     private productRepository: Repository<ProductEntity>,
   ) {}
 
-  async addToCart(dto: CreateCartDto, ip: string): Promise<CartEntity> {
+  async add(dto: AddCartDto, ip: string): Promise<CartEntity> {
     const cartItem = await this.cartRepository
       .createQueryBuilder('cart')
       .leftJoinAndSelect('cart.product', 'product')
@@ -34,29 +33,46 @@ export class CartService {
         product: product,
         productSizeId: dto.productSizeId,
         quantity: 1,
+        price: product.prices[dto.productSizeId],
         totalPrice: product.prices[dto.productSizeId],
       });
     } else {
       cartItem.quantity = cartItem.quantity + 1;
-      cartItem.totalPrice = cartItem.totalPrice + product.prices[dto.productSizeId];
-      console.log(cartItem)
+      cartItem.totalPrice = cartItem.totalPrice + cartItem.price;
       return this.cartRepository.save(cartItem);
     }
   }
 
-  findAll() {
-    return `This action returns all cart`;
+  async reduce(id: number, ip: string): Promise<CartEntity> {
+    const cartItem = await this.cartRepository
+      .createQueryBuilder('cart')
+      .leftJoinAndSelect('cart.product', 'product')
+      .where('cart.userIP = :userIP', { userIP: ip })
+      .andWhere('cart.id = :id', { id })
+      .getOne();
+
+    if (!cartItem) {
+      throw new BadRequestException(`Записи с id=${id} не найдено`);
+    } else {
+      if (cartItem.quantity === 1) {
+        return this.cartRepository.save(cartItem);
+      } else {
+        cartItem.quantity = cartItem.quantity - 1;
+        cartItem.totalPrice = cartItem.totalPrice - cartItem.price;
+        return this.cartRepository.save(cartItem);
+      }
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} cart`;
+  async findAll(ip: string): Promise<CartEntity[]> {
+    return this.cartRepository
+      .createQueryBuilder('cart')
+      .leftJoinAndSelect('cart.product', 'product')
+      .where('cart.userIP = :userIP', { userIP: ip })
+      .getMany();
   }
 
-  update(id: number, updateCartDto: UpdateCartDto) {
-    return `This action updates a #${id} cart`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} cart`;
+  delete(id: number): Promise<DeleteResult> {
+    return this.cartRepository.delete(id);
   }
 }
