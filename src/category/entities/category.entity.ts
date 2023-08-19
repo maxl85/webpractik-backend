@@ -1,5 +1,5 @@
 import { ApiHideProperty } from '@nestjs/swagger';
-import { Column, Entity, JoinColumn, JoinTable, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 import { ProductEntity } from 'src/product/entities/product.entity';
 
@@ -10,6 +10,9 @@ export class CategoryEntity {
 
   @Column()
   name: string;
+
+  @Column({ nullable: true })
+  image: string;
 
   @ApiHideProperty()
   @OneToMany(() => ProductEntity, (product) => product.category)

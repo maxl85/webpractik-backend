@@ -6,13 +6,19 @@ import {
   Patch,
   Param,
   Delete,
+  Response,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { DeleteResult } from 'typeorm';
 
 import { CategoryService } from './category.service';
-import { CategoryDto } from './dto/category.dto';
+import { CreateCategoryDto } from './dto/create-category.dto';
+import { UpdateCategoryDto } from './dto/update-category.dto';
 import { CategoryEntity } from './entities/category.entity';
+import { fileStorage } from './storage';
 
 @ApiTags('category')
 @Controller('category')
@@ -20,13 +26,23 @@ export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
   @Post()
-  create(@Body() dto: CategoryDto): Promise<CategoryEntity> {
-    return this.categoryService.create(dto);
+  @ApiConsumes('multipart/form-data')
+  @UseInterceptors(FileInterceptor('image', { storage: fileStorage }))
+  create(
+    @Body() dto: CreateCategoryDto,
+    @UploadedFile() image: Express.Multer.File,
+  ): Promise<CategoryEntity> {
+    return this.categoryService.create(dto, image);
   }
 
   @Get()
   findAll(): Promise<CategoryEntity[]> {
     return this.categoryService.findAll();
+  }
+
+  @Get('/image/:path')
+  download(@Param('path') path: string, @Response() response) {
+    return response.sendFile(path, { root: './db_images/category' });
   }
 
   @Get(':id')
@@ -35,8 +51,14 @@ export class CategoryController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() dto: CategoryDto) {
-    return this.categoryService.update(+id, dto);
+  @ApiConsumes('multipart/form-data')
+  @UseInterceptors(FileInterceptor('image', { storage: fileStorage }))
+  update(
+    @Param('id') id: string,
+    @Body() dto: UpdateCategoryDto,
+    @UploadedFile() image: Express.Multer.File,
+  ) {
+    return this.categoryService.update(+id, dto, image);
   }
 
   @Delete(':id')

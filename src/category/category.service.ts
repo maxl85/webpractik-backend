@@ -1,8 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { DeleteResult, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
+import * as fs from 'fs';
 
-import { CategoryDto } from './dto/category.dto';
+import { CreateCategoryDto } from './dto/create-category.dto';
+import { UpdateCategoryDto } from './dto/update-category.dto';
 import { CategoryEntity } from './entities/category.entity';
 
 @Injectable()
@@ -12,10 +14,14 @@ export class CategoryService {
     private repository: Repository<CategoryEntity>,
   ) {}
 
-  async create(dto: CategoryDto): Promise<CategoryEntity> {
-    const category = new CategoryEntity();
-    category.name = dto.name;
-    return this.repository.save(category);
+  async create(
+    dto: CreateCategoryDto,
+    image: Express.Multer.File,
+  ): Promise<CategoryEntity> {
+    return this.repository.save({
+      image: image.filename,
+      name: dto.name,
+    });
   }
 
   async findAll(): Promise<CategoryEntity[]> {
@@ -26,9 +32,28 @@ export class CategoryService {
     return this.repository.findOneBy({ id });
   }
 
-  async update(id: number, dto: CategoryDto): Promise<CategoryEntity> {
+  async update(
+    id: number,
+    dto: UpdateCategoryDto,
+    image: Express.Multer.File,
+  ): Promise<CategoryEntity> {
     const toUpdate = await this.repository.findOneBy({ id });
-    toUpdate.name = dto.name;
+    if (!toUpdate) {
+      throw new BadRequestException(`Записи с id=${id} не найдено`);
+    }
+    if (dto.name) {
+      toUpdate.name = dto.name;
+    }
+    if (image) {
+      if (toUpdate.image !== image.filename) {
+        fs.unlink(`db_images/category/${toUpdate.image}`, (err) => {
+          if (err) {
+            console.error(err);
+          }
+        });
+      }
+      toUpdate.image = image.filename;
+    }
     return this.repository.save(toUpdate);
   }
 
