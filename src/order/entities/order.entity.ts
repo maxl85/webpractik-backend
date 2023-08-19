@@ -7,6 +7,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { ProductEntity } from 'src/product/entities/product.entity';
+import { OrderItemEntity } from './orderItem.entity';
 
 @Entity('order')
 export class OrderEntity {
@@ -25,16 +26,9 @@ export class OrderEntity {
   @Column()
   payment: number;
 
-  // @OneToMany(() => ProductEntity, (product) => product.id)
-  @ManyToMany(() => ProductEntity)
+  @OneToMany(() => OrderItemEntity, (item) => item.id)
   @JoinColumn()
-  products: ProductEntity[];
-
-  @Column('int', { array: true })
-  productSizes: number[];
-
-  @Column('int', { array: true })
-  quantities: number[];
+  items: OrderItemEntity[];
 
   @Column()
   totalPrice: number;

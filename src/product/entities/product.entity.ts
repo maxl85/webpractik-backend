@@ -10,6 +10,7 @@ import {
 import { CategoryEntity } from 'src/category/entities/category.entity';
 import { CartEntity } from 'src/cart/entities/cart.entity';
 import { OrderEntity } from 'src/order/entities/order.entity';
+import { OrderItemEntity } from 'src/order/entities/orderItem.entity';
 
 @Entity('product')
 export class ProductEntity {
@@ -38,4 +39,8 @@ export class ProductEntity {
   @OneToMany(() => CartEntity, (cart) => cart.id)
   @JoinColumn()
   cart: CartEntity[];
+
+  @OneToMany(() => OrderItemEntity, (orderItem) => orderItem.id)
+  @JoinColumn()
+  orderItem: OrderItemEntity[];
 }
