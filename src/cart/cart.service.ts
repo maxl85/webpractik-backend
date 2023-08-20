@@ -69,7 +69,8 @@ export class CartService {
       .createQueryBuilder('cart')
       .leftJoinAndSelect('cart.product', 'product')
       .where('cart.userIP = :userIP', { userIP: ip })
-      .getMany();
+      .orderBy('cart.id', 'ASC')
+      .getRawMany();
   }
 
   delete(id: number): Promise<DeleteResult> {

@@ -61,7 +61,12 @@ export class ProductService {
   }
 
   async findAll(): Promise<ProductEntity[]> {
-    return this.productRepository.find();
+    // return this.productRepository.find();
+    return this.productRepository
+      .createQueryBuilder('product')
+      .leftJoinAndSelect('product.category', 'category')
+      .orderBy('product.id', 'ASC')
+      .getRawMany();
   }
 
   async findOne(id: number): Promise<ProductEntity> {
