@@ -9,7 +9,6 @@ import {
 
 import { CategoryEntity } from 'src/category/entities/category.entity';
 import { CartEntity } from 'src/cart/entities/cart.entity';
-import { OrderEntity } from 'src/order/entities/order.entity';
 import { OrderItemEntity } from 'src/order/entities/orderItem.entity';
 
 @Entity('product')

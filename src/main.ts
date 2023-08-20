@@ -20,8 +20,6 @@ async function bootstrap() {
       `[The source API definition (json)](http://${process.env.SERVER}:${process.env.PORT}/api-json)`,
     )
     .setVersion('1.0')
-    // .addTag('promo')
-    // .addTag('pizza')
     .build();
 
   const options: SwaggerDocumentOptions = {

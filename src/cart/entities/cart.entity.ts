@@ -31,19 +31,3 @@ export class CartEntity {
   @Column()
   totalPrice: number;
 }
-
-// @Entity('cart')
-// export class CartEntity {
-//   @PrimaryGeneratedColumn()
-//   id: number;
-
-//   @Column()
-//   userIP: string;
-
-//   @Column()
-//   totalPrice: number;
-
-//   @OneToMany(() => CartItemEntity, (cartItem) => cartItem.id)
-//   @JoinColumn()
-//   cartItem: CartItemEntity[];
-// }

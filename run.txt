@@ -1,0 +1,27 @@
+// on server
+curl https://raw.githubusercontent.com/creationix/nvm/master/install.sh | bash
+nvm list-remote
+nvm install v18
+nvm ls
+nvm current
+nvm use v18
+nvm alias default 18
+
+
+git clone https://github.com/maxl85/webpractik-backend.git
+cd webpractik-backend
+npm ci
+npm run build
+nano .env
+nano docker.env
+docker build --tag "nestjs-api" .
+docker compose up -d
+docker compose logs -f -n 20
+
+
+git pull
+npm run build
+docker build --tag "nestjs-api" .
+docker compose up -d
+docker compose logs -f
+

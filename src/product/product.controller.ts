@@ -36,17 +36,6 @@ export class ProductController {
     return this.productService.create(dto, image);
   }
 
-  // @Get('findByCategoryId')
-  // findByCategoryId(
-  //   @Query('categoryId') categoryId: number,
-  // ): Promise<ProductEntity[]> {
-  //   return this.productService.findByCategoryId(categoryId);
-  // }
-
-  // @Get()
-  // findAll(): Promise<ProductEntity[]> {
-  //   return this.productService.findAll();
-  // }
   @Get()
   @ApiQuery({ name: 'categoryId', required: false })
   findAll(@Query('categoryId') categoryId: number): Promise<ProductEntity[]> {

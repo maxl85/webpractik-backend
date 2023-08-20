@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Ip } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Ip } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { CartService } from './cart.service';
 import { AddCartDto } from './dto/add-cart.dto';
@@ -24,7 +24,7 @@ export class CartController {
   }
 
   @Delete(':id')
-  delete(@Param('id') id: string, @Ip() ip: string) {
+  delete(@Param('id') id: string) {
     return this.cartService.delete(+id);
   }
 }

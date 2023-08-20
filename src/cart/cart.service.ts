@@ -70,7 +70,7 @@ export class CartService {
       .leftJoinAndSelect('cart.product', 'product')
       .where('cart.userIP = :userIP', { userIP: ip })
       .orderBy('cart.id', 'ASC')
-      .getRawMany();
+      .getMany();
   }
 
   delete(id: number): Promise<DeleteResult> {

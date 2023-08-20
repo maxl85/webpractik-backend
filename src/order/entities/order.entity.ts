@@ -2,11 +2,9 @@ import {
   Column,
   Entity,
   JoinColumn,
-  ManyToMany,
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { ProductEntity } from 'src/product/entities/product.entity';
 import { OrderItemEntity } from './orderItem.entity';
 
 @Entity('order')

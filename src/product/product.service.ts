@@ -22,22 +22,6 @@ export class ProductService {
     dto: CreateProductDto,
     image: Express.Multer.File,
   ): Promise<ProductEntity> {
-    // const product = new ProductEntity();
-    // Object.assign(product, dto);
-    // product.image = image.filename;
-    // return this.productRepository.save(product);
-
-    // return this.productRepository.save({
-    //   image: image.filename,
-    //   name: dto.name,
-    //   description: dto.description,
-    //   sizes: dto.sizes,
-    //   prices: dto.prices,
-    //   category: { id: dto.categoryId },
-    // });
-    
-    // console.log(image.destination.replace('.'))
-
     const product = new ProductEntity();
     product.image = image.filename;
     // product.image = image.path;
@@ -61,12 +45,12 @@ export class ProductService {
   }
 
   async findAll(): Promise<ProductEntity[]> {
-    // return this.productRepository.find();
-    return this.productRepository
-      .createQueryBuilder('product')
-      .leftJoinAndSelect('product.category', 'category')
-      .orderBy('product.id', 'ASC')
-      .getRawMany();
+    return this.productRepository.find();
+    // return this.productRepository
+    //   .createQueryBuilder('product')
+    //   .leftJoinAndSelect('product.category', 'category')
+    //   .orderBy('product.id', 'ASC')
+    //   .getRawMany();
   }
 
   async findOne(id: number): Promise<ProductEntity> {
@@ -99,8 +83,6 @@ export class ProductService {
         where: { id: dto.categoryId },
         relations: ['products'],
       });
-      // console.log(category);
-      // category.products.push(toUpdate);
       toUpdate.category = category;
     }
     if (image) {
